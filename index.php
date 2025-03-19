@@ -7,14 +7,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    // Retrieve user from the database
-    $stmt = $conn->prepare("SELECT * FROM iss_persons WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // Retrieve user from the database using PDO
+    $stmt = $conn->prepare("SELECT * FROM iss_persons WHERE email = :email");
+    $stmt->bindValue(':email', $email, PDO::PARAM_STR);  // Bind the email parameter
     
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($result) {
+        $user = $result;
         $salt = $user['pwd_salt'];
         $hashed_password = sha1($password . $salt);  // Hashing the password with salt
 
@@ -38,22 +39,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h2>Login</h2>
-    <?php if (isset($error_message)) { echo "<p style='color:red;'>$error_message</p>"; } ?>
-
-    <form action="index.php" method="POST">
-        <label for="email">Email:</label>
-        <input type="email" name="email" required><br><br>
-
-        <label for="password">Password:</label>
-        <input type="password" name="password" required><br><br>
-
-        <button type="submit">Login</button>
-    </form>
-
-    <br>
-    <a href="join.php">Create an Account</a>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h3>Login</h3>
+                    </div>
+                    <div class="card-body">
+                        <?php if (isset($error_message)) { echo "<div class='alert alert-danger'>$error_message</div>"; } ?>
+                        <form action="index.php" method="POST">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control" id="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" name="password" class="form-control" id="password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Login</button>
+                        </form>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="join.php" class="text-decoration-none">Create an Account</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

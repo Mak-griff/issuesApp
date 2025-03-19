@@ -15,10 +15,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $salt = bin2hex(random_bytes(16));  // 16-byte random salt
     $pwd_hash = sha1($password . $salt);  // Hash the password with the salt
 
-    // Prepare insert statement
-    $stmt = $conn->prepare("INSERT INTO iss_persons (fName, lName, mobile, email, pwd_hash, pwd_salt, admin) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssssss", $fName, $lName, $mobile, $email, $pwd_hash, $salt, $admin);
+    // Prepare insert statement using named placeholders
+    $stmt = $conn->prepare("INSERT INTO iss_persons (fName, lName, mobile, email, pwd_hash, pwd_salt, admin) VALUES (:fName, :lName, :mobile, :email, :pwd_hash, :pwd_salt, :admin)");
 
+    // Bind parameters
+    $stmt->bindParam(':fName', $fName, PDO::PARAM_STR);
+    $stmt->bindParam(':lName', $lName, PDO::PARAM_STR);
+    $stmt->bindParam(':mobile', $mobile, PDO::PARAM_STR);
+    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+    $stmt->bindParam(':pwd_hash', $pwd_hash, PDO::PARAM_STR);
+    $stmt->bindParam(':pwd_salt', $salt, PDO::PARAM_STR);
+    $stmt->bindParam(':admin', $admin, PDO::PARAM_STR);
+
+    // Execute the statement
     if ($stmt->execute()) {
         header('Location: index.php');  // Redirect to the login page after successful registration
         exit();
@@ -34,34 +43,62 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h2>Create an Account</h2>
-    <?php if (isset($error_message)) { echo "<p style='color:red;'>$error_message</p>"; } ?>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h3>Create an Account</h3>
+                    </div>
+                    <div class="card-body">
 
-    <form action="join.php" method="POST">
-        <label for="fName">First Name:</label>
-        <input type="text" name="fName" required><br><br>
+                        <?php if (isset($error_message)) { echo "<div class='alert alert-danger'>$error_message</div>"; } ?>
 
-        <label for="lName">Last Name:</label>
-        <input type="text" name="lName" required><br><br>
+                        <form action="join.php" method="POST">
+                            <div class="mb-3">
+                                <label for="fName" class="form-label">First Name:</label>
+                                <input type="text" name="fName" class="form-control" id="fName" required>
+                            </div>
 
-        <label for="mobile">Mobile:</label>
-        <input type="text" name="mobile" required><br><br>
+                            <div class="mb-3">
+                                <label for="lName" class="form-label">Last Name:</label>
+                                <input type="text" name="lName" class="form-control" id="lName" required>
+                            </div>
 
-        <label for="email">Email:</label>
-        <input type="email" name="email" required><br><br>
+                            <div class="mb-3">
+                                <label for="mobile" class="form-label">Mobile:</label>
+                                <input type="text" name="mobile" class="form-control" id="mobile" required>
+                            </div>
 
-        <label for="password">Password:</label>
-        <input type="password" name="password" required><br><br>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email:</label>
+                                <input type="email" name="email" class="form-control" id="email" required>
+                            </div>
 
-        <label for="admin">Admin (yes/no):</label>
-        <input type="text" name="admin" required><br><br>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password:</label>
+                                <input type="password" name="password" class="form-control" id="password" required>
+                            </div>
 
-        <button type="submit">Create Account</button>
-    </form>
+                            <div class="mb-3">
+                                <label for="admin" class="form-label">Admin (yes/no):</label>
+                                <input type="text" name="admin" class="form-control" id="admin" required>
+                            </div>
 
-    <br>
-    <a href="index.php">Already have an account? Login here.</a>
+                            <button type="submit" class="btn btn-primary w-100">Create Account</button>
+                        </form>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="index.php" class="text-decoration-none">Already have an account? Login here.</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
