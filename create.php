@@ -70,16 +70,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" class="form-control" id="project" name="project" required>
             </div>
             <div class="mb-3">
-                <label for="per_id" class="form-label">Assigned Person</label>
-                <select class="form-select" id="per_id" name="per_id" required>
-                    <option value="">Select a person</option>
-                    <?php foreach ($persons as $person): ?>
-                        <option value="<?php echo $person['per_id']; ?>"><?php echo htmlspecialchars($person['full_name']); ?></option>
-                    <?php endforeach; ?>
+            <label for="per_id" class="form-label">Assigned Person</label>
+                <select class="form-control" id="per_id" name="per_id" required>
+                    <option value="" disabled selected></option>
+                    <!-- Populate the dropdown with users from the iss_persons table -->
+                    <?php
+                    $person_stmt = $conn->query("SELECT id, CONCAT(fname, ' ', lname) AS full_name FROM iss_persons");
+                    while ($person = $person_stmt->fetch(PDO::FETCH_ASSOC)) {
+                        $selected = $person['id'] == $issue['per_id'] ? 'selected' : '';
+                        echo "<option value='{$person['id']}' {$selected}>{$person['full_name']}</option>";
+                    }
+                    ?>
                 </select>
             </div>
             <button type="submit" class="btn btn-primary">Create Issue</button>
         </form>
+        <a href="IssuesScreen.php" class="btn btn-secondary mt-3">Back to Issues List</a>
     </div>
 
     <!-- Bootstrap JS and dependencies -->

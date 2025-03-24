@@ -109,6 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="mb-3">
                 <label for="per_id" class="form-label">Assigned Person</label>
                 <select class="form-control" id="per_id" name="per_id" required>
+                    <option value="" disabled selected></option>
                     <!-- Populate the dropdown with users from the iss_persons table -->
                     <?php
                     $person_stmt = $conn->query("SELECT id, CONCAT(fname, ' ', lname) AS full_name FROM iss_persons");
