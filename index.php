@@ -22,7 +22,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Check if the password matches the stored hash
         if ($hashed_password === $user['pwd_hash']) {
             $_SESSION['user_id'] = $user['id'];
-            header('Location: IssuesScreen.php');  // Redirect to the IssuesScreen
+            $_SESSION['admin'] = $user['admin'];
+            header('Location: issuesList.php');  // Redirect to the issuesList
             exit();
         } else {
             $error_message = "Invalid password.";

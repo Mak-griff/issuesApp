@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Execute the statement
     if ($stmt->execute()) {
         // Redirect to the issues list page after the update
-        header('Location: IssuesScreen.php');
+        header('Location: issuesList.php');
         exit();
     } else {
         $error_message = "Error updating issue. Please try again.";
@@ -124,7 +124,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button type="submit" class="btn btn-primary">Update Issue</button>
         </form>
 
-        <a href="IssuesScreen.php" class="btn btn-secondary mt-3">Back to Issues List</a>
+        <a href="issuesList.php" class="btn btn-secondary mt-3">Back to Issues List</a>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

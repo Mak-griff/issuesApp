@@ -4,8 +4,8 @@ require_once '../Database/db.php';  // Database connection file
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get user input
-    $fName = $_POST['fName'];
-    $lName = $_POST['lName'];
+    $fname = $_POST['fname'];
+    $lname = $_POST['lname'];
     $mobile = $_POST['mobile'];
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -16,11 +16,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pwd_hash = sha1($password . $salt);  // Hash the password with the salt
 
     // Prepare insert statement using named placeholders
-    $stmt = $conn->prepare("INSERT INTO iss_persons (fName, lName, mobile, email, pwd_hash, pwd_salt, admin) VALUES (:fName, :lName, :mobile, :email, :pwd_hash, :pwd_salt, :admin)");
+    $stmt = $conn->prepare("INSERT INTO iss_persons (fname, lname, mobile, email, pwd_hash, pwd_salt, admin) VALUES (:fname, :lname, :mobile, :email, :pwd_hash, :pwd_salt, :admin)");
 
     // Bind parameters
-    $stmt->bindParam(':fName', $fName, PDO::PARAM_STR);
-    $stmt->bindParam(':lName', $lName, PDO::PARAM_STR);
+    $stmt->bindParam(':fname', $fname, PDO::PARAM_STR);
+    $stmt->bindParam(':lname', $lname, PDO::PARAM_STR);
     $stmt->bindParam(':mobile', $mobile, PDO::PARAM_STR);
     $stmt->bindParam(':email', $email, PDO::PARAM_STR);
     $stmt->bindParam(':pwd_hash', $pwd_hash, PDO::PARAM_STR);
@@ -59,13 +59,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         <form action="join.php" method="POST">
                             <div class="mb-3">
-                                <label for="fName" class="form-label">First Name:</label>
-                                <input type="text" name="fName" class="form-control" id="fName" required>
+                                <label for="fname" class="form-label">First Name:</label>
+                                <input type="text" name="fname" class="form-control" id="fname" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="lName" class="form-label">Last Name:</label>
-                                <input type="text" name="lName" class="form-control" id="lName" required>
+                                <label for="lname" class="form-label">Last Name:</label>
+                                <input type="text" name="lname" class="form-control" id="lname" required>
                             </div>
 
                             <div class="mb-3">

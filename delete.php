@@ -15,7 +15,7 @@ if (isset($_GET['id'])) {
     // Execute the statement
     if ($stmt->execute()) {
         // Redirect to the issues list page after deletion
-        header('Location: IssuesScreen.php');
+        header('Location: issuesList.php');
         exit();
     } else {
         echo "Error deleting issue. Please try again.";

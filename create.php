@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$short_description, $long_description, $open_date, $close_date, $priority, $org, $project, $per_id]);
 
     // Redirect to the index page after adding the issue
-    header('Location: issuesScreen.php');
+    header('Location: issuesList.php');
     exit;
 }
 
@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit" class="btn btn-primary">Create Issue</button>
         </form>
-        <a href="IssuesScreen.php" class="btn btn-secondary mt-3">Back to Issues List</a>
+        <a href="issuesList.php" class="btn btn-secondary mt-3">Back to Issues List</a>
     </div>
 
     <!-- Bootstrap JS and dependencies -->

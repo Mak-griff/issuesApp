@@ -2,23 +2,9 @@
 session_start();
 require_once '../Database/db.php';  // Database connection file
 
-// Get issue ID from query string
-$issue_id = $_GET['id'];
-
-// Prepare the SQL statement using PDO
-$stmt = $conn->prepare("SELECT * FROM iss_issues WHERE id = :id");
-$stmt->bindParam(':id', $issue_id, PDO::PARAM_INT);  // Bind the issue ID to the prepared statement
-
-// Execute the statement
-$stmt->execute();
-
-// Fetch the issue data
-$issue = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$issue) {
-    echo "Issue not found!";
-    exit();
-}
+// Fetch issues from the database using PDO
+$query = "SELECT * FROM iss_comments";
+$stmt = $conn->query($query);  // PDO::query() method executes the query
 ?>
 
 <!DOCTYPE html>
@@ -26,10 +12,16 @@ if (!$issue) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Issue Details</title>
+    <title>Issues List</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body class="bg-light">
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
@@ -57,22 +49,37 @@ if (!$issue) {
     </nav>
 
     <div class="container mt-5">
-        <h2 class="text-center">Issue Details</h2>
-
-        <div class="card">
-            <div class="card-body">
-                <p><strong>Short Description:</strong> <?php echo htmlspecialchars($issue['short_description']); ?></p>
-                <p><strong>Long Description:</strong> <?php echo htmlspecialchars($issue['long_description']); ?></p>
-                <p><strong>Open Date:</strong> <?php echo htmlspecialchars($issue['open_date']); ?></p>
-                <p><strong>Close Date:</strong> <?php echo htmlspecialchars($issue['close_date']); ?></p>
-                <p><strong>Priority:</strong> <?php echo htmlspecialchars($issue['priority']); ?></p>
-                <p><strong>Organization:</strong> <?php echo htmlspecialchars($issue['org']); ?></p>
-                <p><strong>Project:</strong> <?php echo htmlspecialchars($issue['project']); ?></p>
-                <p><strong>Assigned Person:</strong> <?php echo htmlspecialchars($issue['per_id']); ?></p>
-            </div>
-        </div>
-
-        <a href="issuesList.php" class="btn btn-secondary mt-3">Back to Issues List</a>
+        <h2 class="text-center">Comments List</h2>
+        
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Commenter ID</th>
+                    <th>Issue ID</th>
+                    <th>Short Comment</th>
+                    <th>Posted Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                // Fetch each issue and display it
+                while ($issue = $stmt->fetch(PDO::FETCH_ASSOC)) {  // Fetch associative array
+                ?>
+                    <tr>
+                        <td><?php echo $issue['id']; ?></td>
+                        <td><?php echo $issue['per_id']; ?></td>
+                        <td><?php echo $issue['iss_id']; ?></td>
+                        <td><?php echo $issue['short_comment']; ?></td>
+                        <td><?php echo $issue['posted_date']; ?></td>
+                        <td>
+                            <a href="detailsScreen.php?id=<?php echo $issue['iss_id']; ?>" class="btn btn-info btn-sm">View Issue</a>
+                        </td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
