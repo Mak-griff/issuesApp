@@ -19,6 +19,10 @@ if (!$issue) {
     echo "Issue not found!";
     exit();
 }
+
+// Construct the PDF path
+$pdfPath = './uploads/' . $issue['pdf_attachment'];  // Assuming the PDF file is stored in './uploads/' directory
+
 ?>
 
 <!DOCTYPE html>
@@ -69,6 +73,13 @@ if (!$issue) {
                 <p><strong>Organization:</strong> <?php echo htmlspecialchars($issue['org']); ?></p>
                 <p><strong>Project:</strong> <?php echo htmlspecialchars($issue['project']); ?></p>
                 <p><strong>Assigned Person:</strong> <?php echo htmlspecialchars($issue['per_id']); ?></p>
+
+                <!-- Check if PDF is attached and generate the link -->
+                <?php if (!empty($issue['pdf_attachment']) && file_exists($pdfPath)): ?>
+                    <p><strong>PDF Attachment:</strong> 
+                        <a href="<?php echo $pdfPath; ?>" target="_blank" class="btn btn-info btn-sm">View PDF</a>
+                    </p>
+                <?php endif; ?>
             </div>
         </div>
 

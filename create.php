@@ -7,6 +7,37 @@ $stmt->execute();
 $persons = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    if(isset($_FILES['pdf_attachment'])){
+        $fileTmpPath = $_FILES['pdf_attachment']['tmp_name'];
+        $fileName = $_FILES['pdf_attachment']['name'];
+        $fileSize = $_FILES['pdf_attachment']['size'];
+        $fileType = $_FILES['pdf_attachment']['type'];
+        $fileNameCmps = explode(".", $fileName);
+        $fileExtension = strtolower(end($fileNameCmps));
+
+        if ($fileExtension !== 'pdf'){
+            die("Only PDF files allowed!");
+        }
+        if ($fileSize > 2 * 1024 * 1024) {
+            die("File size exceeds 2MB limit!");
+        }
+        $newFileName = MD5(time() . $fileName) . '.' . $fileExtension;
+        $uploadFileDir = './uploads/';
+        $dstPath = $uploadFileDir . $newFileName;
+
+        // if uploads directory does not exist, create it
+        if(!is_dir($uploadFileDir)) {
+            mkdir($uploadFileDir, 0755, true);
+        }
+
+        if(move_uploaded_file($fileTmpPath, $dstPath)){
+            $attachmentPath = $dstPath;
+        } else {
+            die("Error moving file");
+        }
+    }
+
     // Process the form data
     $short_description = $_POST['short_description'];
     $long_description = $_POST['long_description'];
@@ -16,10 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $org = $_POST['org'];
     $project = $_POST['project'];
     $per_id = $_POST['per_id'];
+    // $newFileName is pdf attachment
+    // $attachmentPath is the entire path
 
     // Insert the issue into the database
-    $stmt = $conn->prepare("INSERT INTO iss_issues (short_description, long_description, open_date, close_date, priority, org, project, per_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$short_description, $long_description, $open_date, $close_date, $priority, $org, $project, $per_id]);
+    $stmt = $conn->prepare("INSERT INTO iss_issues (short_description, long_description, open_date, close_date, priority, org, project, per_id, pdf_attachment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$short_description, $long_description, $open_date, $close_date, $priority, $org, $project, $per_id, $newFileName]);
 
     // Redirect to the index page after adding the issue
     header('Location: issuesList.php');
@@ -40,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container mt-5">
         <h2>Create New Issue</h2>
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="short_description" class="form-label">Short Description</label>
                 <input type="text" class="form-control" id="short_description" name="short_description" required>
@@ -82,6 +115,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                     ?>
                 </select>
+            </div>
+            <div class="mb-3">
+            <label for="pdf_attachment" class="form-label">PDF</label>
+            <input type="file" class="form-control" id="pdf_attachment" name="pdf_attachment" accept="application/pdf">
             </div>
             <button type="submit" class="btn btn-primary">Create Issue</button>
         </form>

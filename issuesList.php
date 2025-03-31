@@ -69,6 +69,7 @@ $stmt = $conn->query($query);  // PDO::query() method executes the query
                     <th>Close Date</th>
                     <th>Priority</th>
                     <th>Actions</th>
+                    <th>PDF Attachment</th>
                 </tr>
             </thead>
             <tbody>
@@ -97,6 +98,16 @@ $stmt = $conn->query($query);  // PDO::query() method executes the query
                             }
                             ?>
                         </td>
+                        <td><?php
+                            $pdfPath = './uploads/' . $issue['pdf_attachment'];
+                            if (!empty($issue['pdf_attachment']) && file_exists($pdfPath)) {
+                                // Show the PDF link if a valid attachment exists
+                                echo '<a href="' . $pdfPath . '" target="_blank" class="btn btn-info btn-sm">View PDF</a>';
+                            } else {
+                                // Display no attachment message if no PDF is attached
+                                echo "No attachment";
+                            }
+                        ?></td>
                     </tr>
                 <?php } ?>
             </tbody>
