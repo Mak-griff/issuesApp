@@ -3,6 +3,12 @@ session_start();
 require_once '../Database/db.php';  // Database connection file
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // only admin or the user associated with the issue are able to update the issue
+    if(!($_SESSION['admin'] == "yes" || $_SESSION['user_id'] == $_POST['per_id'])){
+        header('Location: issuesList.php');
+        exit();
+    }
+
     // Get user input
     $issue_id = $_POST['issue_id'];
     $short_description = $_POST['short_description'];
@@ -13,10 +19,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $org = $_POST['org'];
     $project = $_POST['project'];
     $per_id = $_POST['per_id'];
-
     // Prepare the SQL statement
     $stmt = $conn->prepare("UPDATE iss_issues SET short_description = :short_description, long_description = :long_description, open_date = :open_date, close_date = :close_date, priority = :priority, org = :org, project = :project, per_id = :per_id WHERE id = :id");
-
     // Bind parameters
     $stmt->bindParam(':short_description', $short_description, PDO::PARAM_STR);
     $stmt->bindParam(':long_description', $long_description, PDO::PARAM_STR);
@@ -27,7 +31,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bindParam(':project', $project, PDO::PARAM_STR);
     $stmt->bindParam(':per_id', $per_id, PDO::PARAM_INT);
     $stmt->bindParam(':id', $issue_id, PDO::PARAM_INT);
-
     // Execute the statement
     if ($stmt->execute()) {
         // Redirect to the issues list page after the update

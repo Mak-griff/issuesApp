@@ -4,6 +4,16 @@ require_once '../Database/db.php';  // Database connection file
 
 // Check if the issue_id is passed in the URL
 if (isset($_GET['id'])) {
+    $query = $conn->prepare("SELECT * FROM iss_issues WHERE id = :id");
+    $query->bindValue(':id', $_GET['id'], PDO::PARAM_STR);
+    $query->execute();
+    $issue = $query->fetch(PDO::FETCH_ASSOC);
+
+    // only admin or the user associated with the issue are able to update the issue
+    if(!($_SESSION['admin'] == "yes" || $_SESSION['user_id'] == $issue['per_id'])){
+        header('Location: issuesList.php');
+        exit();
+    }
     $issue_id = $_GET['id'];
 
     // Prepare the DELETE SQL statement using PDO

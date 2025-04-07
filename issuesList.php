@@ -18,7 +18,6 @@ $stmt = $conn->query($query);  // PDO::query() method executes the query
         .btn-create {
             background-color: #28a745;
             color: white;
-            font-weight: bold;
         }
 
         .navbar {
@@ -84,16 +83,11 @@ $stmt = $conn->query($query);  // PDO::query() method executes the query
                         <td><?php echo $issue['close_date']; ?></td>
                         <td><?php echo $issue['priority']; ?></td>
                         <td>
-                            <a href="detailsScreen.php?id=<?php echo $issue['id']; ?>" class="btn btn-info btn-sm">View Details</a>
+                            <a href="detailsScreen.php?id=<?php echo $issue['id']; ?>" class="btn btn-info btn-sm">View</a>
                             <?php 
-                            $query = $conn->prepare("SELECT * FROM iss_persons WHERE id = :id");
-                            $query->bindValue(':id', $_SESSION['user_id'], PDO::PARAM_STR);
-                            $query->execute();
-                            $currentUser = $query->fetch(PDO::FETCH_ASSOC);
-
                             // Only admin and issue assignee should be able to update/delete an issue
-                            if ($_SESSION['user_id'] == $issue['per_id'] || $currentUser['admin'] == 'yes') {
-                                echo '<a href="update.php?id=' . $issue['id'] . '" class="btn btn-warning btn-sm">Update</a>';
+                            if ($_SESSION['user_id'] == $issue['per_id'] || $_SESSION['admin'] == 'yes') {
+                                echo ('<a href="update.php?id=' . $issue['id'] . '" class="btn btn-warning btn-sm">Update</a>');
                                 echo ('<a href="delete.php?id=' . $issue['id'] . '" class="btn btn-danger btn-sm" onclick="return confirm(' . 'Are you sure you want to delete this issue?' . ');">Delete</a>');
                             }
                             ?>
