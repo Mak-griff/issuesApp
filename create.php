@@ -1,4 +1,9 @@
 <?php
+session_start();
+if (!isset($_SESSION['user_id'])){
+    session_destroy();
+    header("Location: index.php");
+}
 include('../Database/db.php');
 
 // Fetch persons for the dropdown
@@ -16,25 +21,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fileNameCmps = explode(".", $fileName);
         $fileExtension = strtolower(end($fileNameCmps));
 
-        if ($fileExtension !== 'pdf'){
-            die("Only PDF files allowed!");
-        }
-        if ($fileSize > 2 * 1024 * 1024) {
-            die("File size exceeds 2MB limit!");
-        }
-        $newFileName = MD5(time() . $fileName) . '.' . $fileExtension;
-        $uploadFileDir = './uploads/';
-        $dstPath = $uploadFileDir . $newFileName;
+        if ($fileExtension !== "") {
+            if ($fileExtension !== 'pdf'){
+                die("Only PDF files allowed! : " . $fileExtension);
+            }
+            if ($fileSize > 2 * 1024 * 1024) {
+                die("File size exceeds 2MB limit!");
+            }
+            $newFileName = MD5(time() . $fileName) . '.' . $fileExtension;
+            $uploadFileDir = './uploads/';
+            $dstPath = $uploadFileDir . $newFileName;
 
-        // if uploads directory does not exist, create it
-        if(!is_dir($uploadFileDir)) {
-            mkdir($uploadFileDir, 0755, true);
-        }
+            // if uploads directory does not exist, create it
+            if(!is_dir($uploadFileDir)) {
+                mkdir($uploadFileDir, 0755, true);
+            }
 
-        if(move_uploaded_file($fileTmpPath, $dstPath)){
-            $attachmentPath = $dstPath;
+            if(move_uploaded_file($fileTmpPath, $dstPath)){
+                $attachmentPath = $dstPath;
+            } else {
+                die("Error moving file");
+            }
         } else {
-            die("Error moving file");
+            $newFileName = NULL;
         }
     }
 
@@ -88,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="mb-3">
                 <label for="close_date" class="form-label">Close Date</label>
-                <input type="date" class="form-control" id="close_date" name="close_date" required>
+                <input type="date" class="form-control" id="close_date" name="close_date">
             </div>
             <div class="mb-3">
                 <label for="priority" class="form-label">Priority</label>

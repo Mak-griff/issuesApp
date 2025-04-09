@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['user_id'])){
+    session_destroy();
+    header("Location: index.php");
+}
 require_once '../Database/db.php';  // Database connection file
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -122,6 +126,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     }
                     ?>
                 </select>
+            </div>
+            <div class="mb-3">
+            <label for="pdf_attachment" class="form-label">PDF</label>
+            <input type="file" class="form-control" id="pdf_attachment" name="pdf_attachment" accept="application/pdf">
             </div>
 
             <button type="submit" class="btn btn-primary">Update Issue</button>

@@ -91,9 +91,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <button type="submit" class="btn btn-primary w-100">Create Account</button>
                         </form>
                     </div>
+                    <?php
+                        if (isset($_SESSION['user_id'])){
+                    ?>
+                     <div class="card-footer text-center">
+                        <a href="usersList.php" class="text-decoration-none">Back to Users List</a>
+                    </div>
+                    <?php } else { ?>
                     <div class="card-footer text-center">
                         <a href="index.php" class="text-decoration-none">Already have an account? Login here.</a>
                     </div>
+                    <?php } ?>
                 </div>
             </div>
         </div>

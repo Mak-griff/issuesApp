@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['user_id'])){
+    session_destroy();
+    header("Location: index.php");
+}
 require_once '../Database/db.php';  // Database connection file
 
 // Fetch the user's current data from the database (use the session user ID or query string parameter)

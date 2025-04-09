@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['user_id'])){
+    session_destroy();
+    header("Location: index.php");
+}
 require_once '../Database/db.php';  // Database connection file
 
 // Fetch users from the database using PDO
@@ -15,6 +19,10 @@ $stmt = $conn->query($query);  // PDO::query() method executes the query
     <title>users List</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+         .btn-create {
+            background-color: #28a745;
+            color: white;
+        }
         .navbar {
             margin-bottom: 20px;
         }
@@ -42,6 +50,9 @@ $stmt = $conn->query($query);  // PDO::query() method executes the query
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="issuesList.php">View Issues</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-create nav-link" href="join.php">Add User</a>
                     </li>
                 </ul>
             </div>

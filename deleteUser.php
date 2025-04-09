@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['user_id'])){
+    session_destroy();
+    header("Location: index.php");
+}
 require_once '../Database/db.php';  // Database connection file
 
 // Check if the user is logged in

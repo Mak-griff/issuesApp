@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['user_id'])){
+    session_destroy();
+    header("Location: index.php");
+}
 require_once '../Database/db.php';  // Database connection file
 
 // Get issue ID from query string
@@ -21,8 +25,9 @@ if (!$issue) {
 }
 
 // Construct the PDF path
-$pdfPath = './uploads/' . $issue['pdf_attachment'];  // Assuming the PDF file is stored in './uploads/' directory
-
+if (!empty($issue['pdf_attachment'])){
+    $pdfPath = './uploads/' . $issue['pdf_attachment'];  // Assuming the PDF file is stored in './uploads/' directory
+}
 ?>
 
 <!DOCTYPE html>

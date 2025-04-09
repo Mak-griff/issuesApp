@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['user_id'])){
+    session_destroy();
+    header("Location: index.php");
+}
 require_once '../Database/db.php';  // Database connection file
 
 // Fetch issues from the database using PDO
@@ -93,10 +97,13 @@ $stmt = $conn->query($query);  // PDO::query() method executes the query
                             ?>
                         </td>
                         <td><?php
-                            $pdfPath = './uploads/' . $issue['pdf_attachment'];
-                            if (!empty($issue['pdf_attachment']) && file_exists($pdfPath)) {
-                                // Show the PDF link if a valid attachment exists
-                                echo '<a href="' . $pdfPath . '" target="_blank" class="btn btn-info btn-sm">View PDF</a>';
+                            
+                            if (!empty($issue['pdf_attachment'])){
+                                $pdfPath = './uploads/' . $issue['pdf_attachment'];
+                                if (file_exists($pdfPath)) 
+                                    echo '<a href="' . $pdfPath . '" target="_blank" class="btn btn-info btn-sm">View PDF</a>';
+                                else
+                                    echo 'File does not exist';
                             } else {
                                 // Display no attachment message if no PDF is attached
                                 echo "No attachment";
