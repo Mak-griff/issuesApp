@@ -4,7 +4,7 @@ if (!isset($_SESSION['user_id'])){
     session_destroy();
     header("Location: index.php");
 }
-require_once '../Database/db.php';  // Database connection file
+require_once '../database/database.php';  // Database connection file
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // only admin or the user associated with the issue are able to update the issue
@@ -95,12 +95,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <div class="mb-3">
                 <label for="close_date" class="form-label">Close Date</label>
-                <input type="date" class="form-control" id="close_date" name="close_date" value="<?php echo htmlspecialchars($issue['close_date']); ?>" required>
+                <input type="date" class="form-control" id="close_date" name="close_date" value="<?php echo htmlspecialchars($issue['close_date']); ?>">
             </div>
 
             <div class="mb-3">
                 <label for="priority" class="form-label">Priority</label>
-                <input type="text" class="form-control" id="priority" name="priority" value="<?php echo htmlspecialchars($issue['priority']); ?>" required>
+                <select class="form-control" id="priority" name="priority" required>
+                    <option value="" disabled selected></option>
+                    <?php 
+                        $options = array("low", "med", "high");
+                        foreach ($options as $option) {
+                            $select = $issue['priority'] == $option ? 'selected' : '';
+                            echo "<option value='{$option}' {$select}>{$option}</option>";
+                        }
+                    ?>
+            </select>
             </div>
 
             <div class="mb-3">

@@ -4,7 +4,7 @@ if (!isset($_SESSION['user_id'])){
     session_destroy();
     header("Location: index.php");
 }
-require_once '../Database/db.php';  // Database connection file
+require_once '../database/database.php';  // Database connection file
 
 // Get issue ID from query string
 $issue_id = $_GET['id'];

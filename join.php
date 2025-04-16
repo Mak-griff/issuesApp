@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../Database/db.php';  // Database connection file
+require_once '../database/database.php';  // Database connection file
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get user input

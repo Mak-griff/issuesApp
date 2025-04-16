@@ -4,7 +4,7 @@ if (!isset($_SESSION['user_id'])){
     session_destroy();
     header("Location: index.php");
 }
-include('../Database/db.php');
+include('../database/database.php');
 
 // Fetch persons for the dropdown
 $stmt = $conn->prepare("SELECT id, CONCAT(fname, ' ', lname) AS full_name FROM iss_persons");
@@ -100,8 +100,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="date" class="form-control" id="close_date" name="close_date">
             </div>
             <div class="mb-3">
-                <label for="priority" class="form-label">Priority</label>
-                <input type="text" class="form-control" id="priority" name="priority" required>
+            <label for="priority" class="form-label">Priority</label>
+            <select class="form-control" id="priority" name="priority" required>
+                    <option value="" disabled selected></option>
+                    <?php 
+                        $options = array("low", "med", "high");
+                        foreach ($options as $option) {
+                            $select = $issue['priority'] == $option ? 'selected' : '';
+                            echo "<option value='{$option}' {$select}>{$option}</option>";
+                        }
+                    ?>
+            </select>
             </div>
             <div class="mb-3">
                 <label for="org" class="form-label">Organization</label>

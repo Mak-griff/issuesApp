@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../Database/db.php';  // Database connection file
+require_once '../database/database.php';  // Database connection file
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Getting user input
@@ -48,7 +48,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="col-md-6">
                 <div class="card shadow-lg">
                     <div class="card-header bg-primary text-white text-center">
-                        <h3>Login</h3>
+                        <p><i>Welcome to Issues Tracker!</i></p>
+                        <h3>Login</h3> 
                     </div>
                     <div class="card-body">
                         <?php if (isset($error_message)) { echo "<div class='alert alert-danger'>$error_message</div>"; } ?>

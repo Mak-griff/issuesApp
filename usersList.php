@@ -4,7 +4,7 @@ if (!isset($_SESSION['user_id'])){
     session_destroy();
     header("Location: index.php");
 }
-require_once '../Database/db.php';  // Database connection file
+require_once '../database/database.php';  // Database connection file
 
 // Fetch users from the database using PDO
 $query = "SELECT * FROM iss_persons";
@@ -51,9 +51,11 @@ $stmt = $conn->query($query);  // PDO::query() method executes the query
                     <li class="nav-item">
                         <a class="nav-link" href="issuesList.php">View Issues</a>
                     </li>
+                    <?php if ($_SESSION['admin'] == 'yes') { ?>
                     <li class="nav-item">
                         <a class="btn btn-create nav-link" href="join.php">Add User</a>
                     </li>
+                    <?php } ?>
                 </ul>
             </div>
         </div>
