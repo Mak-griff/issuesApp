@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 16, 2025 at 05:51 PM
+-- Generation Time: Apr 18, 2025 at 09:06 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -45,9 +45,9 @@ CREATE TABLE `iss_issues` (
 --
 
 INSERT INTO `iss_issues` (`id`, `short_description`, `long_description`, `open_date`, `close_date`, `priority`, `org`, `project`, `per_id`, `pdf_attachment`) VALUES
-(2, 'PDF Attachment', 'The user should be able to attach a pdf or not attach a pdf when creating an issue or updating an issue.', '2025-04-09', '0000-00-00', 'high', 'svsu', 'cis355', 2, NULL),
-(3, 'i2', 'This is a filler issue', '2025-04-16', '0000-00-00', 'low', 'svsu', 'cis355', 1, NULL),
-(4, 'i3', 'Testing the functionality of the app', '2025-04-15', '0000-00-00', 'med', 'svsu', 'cis355', 1, '38eab1ec6b8fd645c6b40991de8cd73a.pdf');
+(2, 'PDF Attachment', 'The user should be able to attach a pdf or not attach a pdf when creating an issue or updating an issue.', '2025-04-09', '2025-04-18', 'high', 'svsu', 'cis355', 2, '1360696b2c92e965a38c64fafc2beeac.pdf'),
+(3, 'Closed Issue', 'This is a filler issue, testing the issues list screen and sorting of closed/open issues.', '2025-04-16', '2025-04-17', 'low', 'svsu', 'cis355', 1, NULL),
+(4, 'i3', 'Testing the functionality of the app', '2025-04-15', '0000-00-00', 'med', 'svsu', 'cis355', 1, NULL);
 
 --
 -- Indexes for dumped tables
@@ -67,7 +67,7 @@ ALTER TABLE `iss_issues`
 -- AUTO_INCREMENT for table `iss_issues`
 --
 ALTER TABLE `iss_issues`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
@@ -75,15 +75,14 @@ COMMIT;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
 
-
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 09, 2025 at 05:44 PM
+-- Generation Time: Apr 18, 2025 at 09:05 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -115,6 +114,15 @@ CREATE TABLE `iss_comments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Dumping data for table `iss_comments`
+--
+
+INSERT INTO `iss_comments` (`id`, `per_id`, `iss_id`, `short_comment`, `long_comment`, `posted_date`) VALUES
+(1, 2, 2, 'Success', 'The PDF attachments work as expected!', '2025-04-18'),
+(2, 1, 2, 'Close Issue', 'I am going to close the issue since it has been resolved.', '2025-04-18'),
+(4, 1, 4, 'Test', 'Testing comment functionality.', '2025-04-18');
+
+--
 -- Indexes for dumped tables
 --
 
@@ -132,7 +140,7 @@ ALTER TABLE `iss_comments`
 -- AUTO_INCREMENT for table `iss_comments`
 --
 ALTER TABLE `iss_comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
@@ -145,9 +153,9 @@ COMMIT;
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 09, 2025 at 05:44 PM
+-- Generation Time: Apr 18, 2025 at 09:07 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
