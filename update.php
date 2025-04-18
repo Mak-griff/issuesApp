@@ -13,6 +13,65 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
+    // Fetch current issue record before processing file logic
+$issue_id = $_POST['issue_id'];
+
+$stmt = $conn->prepare("SELECT * FROM iss_issues WHERE id = :id");
+$stmt->bindParam(':id', $issue_id, PDO::PARAM_INT);
+$stmt->execute();
+$issue = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$issue) {
+    die("Issue not found.");
+}
+
+$newFileNameToSave = $issue['pdf_attachment']; // Default to existing
+
+
+// Handle file upload (if new one is added)
+if (isset($_FILES['pdf_attachment']) && $_FILES['pdf_attachment']['error'] === UPLOAD_ERR_OK) {
+    $fileTmpPath = $_FILES['pdf_attachment']['tmp_name'];
+    $fileName = $_FILES['pdf_attachment']['name'];
+    $fileSize = $_FILES['pdf_attachment']['size'];
+    $fileType = $_FILES['pdf_attachment']['type'];
+    $fileNameCmps = explode(".", $fileName);
+    $fileExtension = strtolower(end($fileNameCmps));
+
+    if ($fileExtension !== 'pdf') {
+        die("Only PDF files are allowed!");
+    }
+    if ($fileSize > 2 * 1024 * 1024) {
+        die("File size exceeds 2MB limit!");
+    }
+
+    $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
+    $uploadFileDir = './uploads/';
+    $dstPath = $uploadFileDir . $newFileName;
+
+    if (!is_dir($uploadFileDir)) {
+        mkdir($uploadFileDir, 0755, true);
+    }
+
+    if (move_uploaded_file($fileTmpPath, $dstPath)) {
+        // Delete the old file if it exists
+        if (!empty($issue['pdf_attachment']) && file_exists('./uploads/' . $issue['pdf_attachment'])) {
+            unlink('./uploads/' . $issue['pdf_attachment']);
+        }
+        $newFileNameToSave = $newFileName;
+    } else {
+        die("Error uploading the new file.");
+    }
+}
+
+// Handle file removal (checkbox)
+if (isset($_POST['remove_pdf']) && $_POST['remove_pdf'] == "1") {
+    if (!empty($issue['pdf_attachment']) && file_exists('./uploads/' . $issue['pdf_attachment'])) {
+        unlink('./uploads/' . $issue['pdf_attachment']);
+    }
+    $newFileNameToSave = NULL;
+}
+
+
     // Get user input
     $issue_id = $_POST['issue_id'];
     $short_description = $_POST['short_description'];
@@ -23,8 +82,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $org = $_POST['org'];
     $project = $_POST['project'];
     $per_id = $_POST['per_id'];
+
     // Prepare the SQL statement
-    $stmt = $conn->prepare("UPDATE iss_issues SET short_description = :short_description, long_description = :long_description, open_date = :open_date, close_date = :close_date, priority = :priority, org = :org, project = :project, per_id = :per_id WHERE id = :id");
+    $stmt = $conn->prepare("UPDATE iss_issues SET short_description = :short_description, long_description = :long_description, open_date = :open_date, close_date = :close_date, priority = :priority, org = :org, project = :project, per_id = :per_id, pdf_attachment = :pdf_attachment WHERE id = :id");
     // Bind parameters
     $stmt->bindParam(':short_description', $short_description, PDO::PARAM_STR);
     $stmt->bindParam(':long_description', $long_description, PDO::PARAM_STR);
@@ -35,6 +95,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bindParam(':project', $project, PDO::PARAM_STR);
     $stmt->bindParam(':per_id', $per_id, PDO::PARAM_INT);
     $stmt->bindParam(':id', $issue_id, PDO::PARAM_INT);
+    $stmt->bindParam(':pdf_attachment', $newFileNameToSave, PDO::PARAM_STR);
+
     // Execute the statement
     if ($stmt->execute()) {
         // Redirect to the issues list page after the update
@@ -57,6 +119,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Issue not found!";
         exit();
     }
+    $existingPdf = $issue['pdf_attachment'];
 }
 ?>
 
@@ -75,7 +138,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <?php if (isset($error_message)) { echo "<p style='color:red;'>$error_message</p>"; } ?>
 
-        <form action="update.php" method="POST">
+        <form action="update.php" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="issue_id" value="<?php echo htmlspecialchars($issue['id']); ?>">
 
             <div class="mb-3">
@@ -137,10 +200,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </select>
             </div>
             <div class="mb-3">
-            <label for="pdf_attachment" class="form-label">PDF</label>
-            <input type="file" class="form-control" id="pdf_attachment" name="pdf_attachment" accept="application/pdf">
+                <label for="pdf_attachment" class="form-label">PDF Attachment</label>
+                <?php if (!empty($existingPdf)) : ?>
+                    <p>Existing PDF: <a href="uploads/<?php echo htmlspecialchars($existingPdf); ?>" target="_blank"><?php echo htmlspecialchars($existingPdf); ?></a></p>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="remove_pdf" id="remove_pdf" value="1">
+                        <label class="form-check-label" for="remove_pdf">Remove existing PDF</label>
+                    </div>
+                <?php endif; ?>
+                <input type="file" class="form-control mt-2" id="pdf_attachment" name="pdf_attachment" accept="application/pdf">
             </div>
-
             <button type="submit" class="btn btn-primary">Update Issue</button>
         </form>
 

@@ -6,3 +6,10 @@ contains iss_issuesApp, NOT in the iss_issuesApp folder itself.
 
 The issues app is ready to run! Entering localhost/issuesApp should open the login screen now.
 
+Provided logins:
+    Admin- 
+        email: jdoe@svsu.edu
+        pswd: jane
+    Non-admin-
+        email: msmith@svsu.edu
+        pswd: mary

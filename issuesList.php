@@ -6,9 +6,14 @@ if (!isset($_SESSION['user_id'])){
 }
 require_once '../database/database.php';  // Database connection file
 
-// Fetch issues from the database using PDO
-$query = "SELECT * FROM iss_issues";
-$stmt = $conn->query($query);  // PDO::query() method executes the query
+ if (isset($_GET['allIssues'])) {               // If the 'View All' link is clicked
+     $query = "SELECT * FROM iss_issues";
+     $stmt = $conn->query($query); 
+} else {                              // Default 
+    $query = "SELECT * FROM iss_issues WHERE close_date = 0000-00-00";
+    $stmt = $conn->query($query); 
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -62,6 +67,7 @@ $stmt = $conn->query($query);  // PDO::query() method executes the query
 
     <div class="container mt-5">
         <h2 class="text-center">Issues List</h2>
+        <a href="issuesList.php?allIssues=1" class="text-decoration-none">View All Issues</a>
         
         <table class="table table-bordered mt-4">
             <thead>
@@ -87,7 +93,7 @@ $stmt = $conn->query($query);  // PDO::query() method executes the query
                         <td><?php echo $issue['close_date']; ?></td>
                         <td><?php echo $issue['priority']; ?></td>
                         <td>
-                            <a href="detailsScreen.php?id=<?php echo $issue['id']; ?>" class="btn btn-info btn-sm">View</a>
+                            <a href="detailsScreen.php?id=<?php echo $issue['id']; ?>" class="btn btn-info btn-sm">Details</a>
                             <?php 
                             // Only admin and issue assignee should be able to update/delete an issue
                             if ($_SESSION['user_id'] == $issue['per_id'] || $_SESSION['admin'] == 'yes') {
